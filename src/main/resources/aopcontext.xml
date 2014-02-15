@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"	
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<bean id="calcService" class="be.rd.service.CalcService"/>
+	
+	<bean id="myBean" class="be.rd.beans.DependingBean">
+		<property name="calcService" ref="calcService"/>
+	</bean>
+	
+	<!-- The advice is configured as a normal bean
+	The pointcuts and aspects are defined in the aop:config -->
+	<bean id="myAdvice" class="be.rd.advice.MyAdvice"/>
+	<aop:config>
+		<aop:pointcut id="addPointCut" expression="execution(* be.rd.service.CalcService.add(..))"/>
+		
+		<!-- <aop:aspect ref="myAdvice">
+			<aop:before method="simpleBeforeAdvice" pointcut-ref="addPointCut"/>
+		</aop:aspect>-->
+		
+		<aop:aspect ref="myAdvice">
+			<aop:around method="simpleAroundAdvice" pointcut-ref="addPointCut"/>
+		</aop:aspect>
+	</aop:config>
+</beans>
